@@ -41,6 +41,8 @@ module Make (H : Digestif.S) = struct
       H.of_raw_string H.to_raw_string
 
   let hash s = H.digesti_string s
+  let to_raw_string s = H.to_raw_string s
+  let unsafe_of_raw_string s = H.of_raw_string s
 end
 
 module Make_BLAKE2B (D : sig
@@ -76,6 +78,8 @@ module V1 (K : S) : S with type t = K.t = struct
   let hash = K.hash
   let short_hash = K.short_hash
   let hash_size = K.hash_size
+  let to_raw_string = K.to_raw_string
+  let unsafe_of_raw_string = K.unsafe_of_raw_string
   let h = Type.string_of `Int64
   let to_bin_key = Type.unstage (Type.to_bin_string K.t)
   let of_bin_key = Type.unstage (Type.of_bin_string K.t)
@@ -94,4 +98,24 @@ module V1 (K : S) : S with type t = K.t = struct
       | Error (`Msg e) -> Fmt.failwith "decode_bin: %s" e
 
   let t = Type.like K.t ~bin:(encode_bin, decode_bin, size_of)
+end
+
+module Set = struct
+  module Make (Hash : S) = struct
+    include Irmin_data.Hashset.Fixed_size_string
+
+    let create ?(initial_capacity = 0) () =
+      let elt_length = Hash.hash_size in
+      let hash s = Hash.(short_hash (unsafe_of_raw_string s)) in
+      create ~elt_length ~initial_capacity ~hash ()
+
+    let add t h = add t (Hash.to_raw_string h)
+    let mem t h = mem t (Hash.to_raw_string h)
+
+    let invariant h_invariant t =
+      let s_invariant s = h_invariant (Hash.unsafe_of_raw_string s) in
+      invariant s_invariant t
+  end
+
+  module type S = Set
 end

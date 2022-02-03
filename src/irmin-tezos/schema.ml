@@ -52,6 +52,7 @@ module Hash : Irmin.Hash.S = struct
   let hash_size = H.digest_size
   let hash = H.digesti_string
   let to_raw_string = H.to_raw_string
+  let unsafe_of_raw_string = H.of_raw_string
 end
 
 module Info = Irmin.Info.Default
