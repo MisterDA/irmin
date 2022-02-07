@@ -184,7 +184,7 @@ module Fixed_size_string = struct
      benchmarking this implementation. *)
   let reachable_words { arena; hash_elt; hashset; bucket_count_log2 = _ } =
     let record_words = 1 + 4 (* header + 4 fields *)
-    and arena_words = Obj.reachable_words (Obj.repr arena)
+    and arena_words = Arena.reachable_words arena
     and hash_elt_words = Obj.reachable_words (Obj.repr hash_elt)
     and hashset_words =
       Array.fold_left hashset ~init:1 ~f:(fun acc bucket ->

@@ -61,3 +61,9 @@ let expand t size =
   let new_data = Bigstringaf.create new_len in
   Bigstringaf.blit t.data ~src_off:0 new_data ~dst_off:0 ~len:t.next_offset;
   t.data <- new_data
+
+let reachable_words t =
+  let bytes_per_word = Sys.word_size / 8 in
+  (* Doesn't account for any the fixed-size components of the bigarray struct,
+     which are assumed to be negligible compared to the data itself. *)
+  Bigstringaf.length t.data / bytes_per_word

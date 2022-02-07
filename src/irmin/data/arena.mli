@@ -48,3 +48,5 @@ val dereference : t -> id -> string
 val elt_equal : t -> id -> string -> bool
 (** [elt_equal t id s] is equivalent to [String.equal (dereference t id) s], but
     more efficient. *)
+
+val reachable_words : t -> int
