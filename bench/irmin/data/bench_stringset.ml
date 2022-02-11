@@ -44,24 +44,34 @@ module type S = sig
   val reachable_words : t -> int
 end
 
+module Elt = struct
+  type t = string
+
+  let equal = String.equal
+  let elt_length = 32
+  let hash elt = Int64.to_int Bytes.(get_int64_be (unsafe_of_string elt) 0)
+  let hash_substring t ~off ~len:_ = Int64.to_int (Bigstringaf.get_int64_be t off)
+end
+
 module Stringset_irmin : S = struct
-  module T = Irmin_data.Hashset.Fixed_size_string
+  module T = Irmin_data.String_set
 
   type t = T.t
 
   let implementation_name = "irmin"
 
   let create () =
-    T.create ~elt_length:32 ~hash:Hashtbl.hash ~initial_capacity:0 ()
+    let open Elt in
+    T.create ~elt_length ~hash ~hash_substring ~initial_capacity:0 ()
 
   let add = T.add
   let reachable_words = T.reachable_words
 end
 
 module Stringset_stdlib : S = struct
-  module T = Stdlib.Hashtbl
+  module T = Stdlib.Hashtbl.Make (Elt)
 
-  type t = (string, unit) T.t
+  type t = unit T.t
 
   let implementation_name = "stdlib"
   let create () = T.create 0
@@ -70,8 +80,8 @@ module Stringset_stdlib : S = struct
 end
 
 let random_string () =
-  let b = Bytes.create 32 in
-  for i = 0 to 31 do
+  let b = Bytes.create Elt.elt_length in
+  for i = 0 to Elt.elt_length - 1 do
     Bytes.set b i (Char.chr (Random.int 256))
   done;
   Bytes.unsafe_to_string b

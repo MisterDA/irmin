@@ -1,6 +1,4 @@
 (library
  (name irmin_data)
  (public_name irmin.data)
- (libraries bigstringaf)
- (instrumentation
-  (backend bisect_ppx)))
+ (libraries bigstringaf fmt))

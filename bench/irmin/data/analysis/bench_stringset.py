@@ -11,6 +11,13 @@ if len(sys.argv) != 3:
 df = pd.read_csv(sys.argv[1])
 figure_file = sys.argv[2]
 
+for i in range(0,300000,1000):
+    df = df.append({
+        'entries': i,
+        'reachable_words': i * 4,
+        'implementation': 'optimal'
+    }, ignore_index=True)
+
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(13, 5))
 
 sns.lineplot(data = df, ax = ax1, x = 'entries', y = 'reachable_words', hue = 'implementation')

@@ -42,6 +42,8 @@ module type S = sig
       is a valid output of the hash process, so should only be used on strings
       that are known to have been built with {!to_raw_string}. *)
 
+  val short_hash_substring : Bigstringaf.t -> int -> int
+
   (** {1 Value Types} *)
 
   val t : t Type.t
@@ -73,9 +75,8 @@ module type Set = sig
   type hash
 
   val create : ?initial_capacity:int -> unit -> t
-
-  (** @inline *)
-  include Irmin_data.Hashset.S with type _ t := t and type _ elt := hash
+  val add : t -> hash -> unit
+  val mem : t -> hash -> bool
 end
 
 module type Sigs = sig

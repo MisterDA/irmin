@@ -49,6 +49,8 @@ module Hash : Irmin.Hash.S = struct
     let f = short_hash_string ?seed:None in
     fun t -> f (H.to_raw_string t)
 
+  let short_hash_substring _ = assert false (* TODO *)
+
   let hash_size = H.digest_size
   let hash = H.digesti_string
   let to_raw_string = H.to_raw_string

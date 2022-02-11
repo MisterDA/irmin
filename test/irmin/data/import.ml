@@ -1,7 +1,4 @@
-include Stdlib.StdLabels
-include Stdlib.MoreLabels
 include Irmin_data
-include Irmin_data.Private
 
 let check typ pos ~expected actual =
   Alcotest.(check ~pos typ) "" expected actual
@@ -22,15 +19,4 @@ let check_invalid_arg pos f =
   match f () with
   | _ -> fail None
   | exception Invalid_argument _ -> ()
-  | exception exn -> fail (Some exn)
-
-let check_failure pos f =
-  let fail got =
-    Alcotest.failf ~pos "Expected function to raise `Failure` but raised: %a"
-      Fmt.(Dump.option exn)
-      got
-  in
-  match f () with
-  | _ -> fail None
-  | exception Failure _ -> ()
   | exception exn -> fail (Some exn)

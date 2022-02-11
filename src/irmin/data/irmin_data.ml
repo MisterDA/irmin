@@ -18,13 +18,5 @@
     implementation of Irmin. It is exposed only for internal use, and does not
     provide a stable API. *)
 
-module Hashset = Hashset
-(** Mutable sets of hashable element types. *)
-
-(** Internal modules exposed for testing only. *)
-module Private = struct
-  module Arena = Arena
-  module Immediate_array = Immediate_array
-  module Obj_either = Obj_either
-  module Uniform_array = Uniform_array
-end
+module String_set = String_set
+(** Mutable sets of strings. *)
